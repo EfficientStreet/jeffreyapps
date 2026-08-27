@@ -1,9 +1,11 @@
 import * as React from "react"
 import { Link, router, usePage } from "@inertiajs/react"
 import {
+  Bookmark,
   ChevronsLeft,
   ChevronsRight,
   Home,
+  ListTodo,
   LogOut,
   Menu,
   Settings,
@@ -24,7 +26,7 @@ import { cn } from "@/lib/utils"
 import type { PageProps } from "@/types/inertia"
 
 const STORAGE_KEY = "main-nav-open"
-const BRAND = "Build New"
+const BRAND = "JeffreyApps"
 
 export type NavItemDef = {
   href: string
@@ -39,6 +41,18 @@ const DEFAULT_NAV_ITEMS: NavItemDef[] = [
     icon: Home,
     label: "Home",
     match: (url) => url === "/" || url.startsWith("/dashboard"),
+  },
+  {
+    href: "/todos",
+    icon: ListTodo,
+    label: "To-Dos",
+    match: (url) => url.startsWith("/todos"),
+  },
+  {
+    href: "/bookmarks",
+    icon: Bookmark,
+    label: "Bookmarks",
+    match: (url) => url.startsWith("/bookmarks"),
   },
 ]
 

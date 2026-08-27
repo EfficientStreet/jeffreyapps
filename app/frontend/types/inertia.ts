@@ -3,6 +3,7 @@ import type { PageProps as InertiaPageProps } from "@inertiajs/core"
 export type CurrentUser = {
   id: number
   email: string
+  name: string | null
   timezone: string | null
   admin: boolean
 } | null

@@ -11,6 +11,9 @@ Rails.application.routes.draw do
   get "dashboard", to: "dashboard#show", as: :dashboard
   get "settings",  to: "settings#show",  as: :settings
 
+  resources :todos,     only: %i[ index ]
+  resources :bookmarks, only: %i[ index ]
+
   namespace :admin do
     root to: redirect("/admin/users")
     get "design-system", to: "design_system#show", as: :design_system
@@ -19,6 +22,7 @@ Rails.application.routes.draw do
 
   get   "profile",          to: "profiles#details",          as: :profile
   get   "profile/password", to: "profiles#password",         as: :profile_password
+  patch "profile/name",     to: "profiles#update_name"
   patch "profile/email",    to: "profiles#update_email"
   patch "profile/password", to: "profiles#update_password"
 

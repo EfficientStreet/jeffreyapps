@@ -13,7 +13,13 @@ export default function ProfileDetails() {
   const user = props.current_user
   const errors = props.errors ?? {}
 
+  const nameForm = useForm({ name: user?.name ?? "" })
   const emailForm = useForm({ email: user?.email ?? "" })
+
+  const submitName = (e: FormEvent) => {
+    e.preventDefault()
+    nameForm.patch("/profile/name", { preserveScroll: true })
+  }
 
   const submit = (e: FormEvent) => {
     e.preventDefault()
@@ -37,6 +43,28 @@ export default function ProfileDetails() {
         {props.flash?.notice && (
           <p className="mt-6 text-sm text-accent">{props.flash.notice}</p>
         )}
+
+        <section className="mt-10 max-w-md">
+          <form onSubmit={submitName} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="name">Name</label>
+              <Input
+                id="name"
+                type="text"
+                autoComplete="name"
+                aria-invalid={!!errors.name}
+                value={nameForm.data.name}
+                onChange={(e) => nameForm.setData("name", e.target.value)}
+              />
+              {errors.name && (
+                <p className="text-xs text-danger-display">{errors.name}</p>
+              )}
+            </div>
+            <Button type="submit" disabled={nameForm.processing}>
+              Update name
+            </Button>
+          </form>
+        </section>
 
         <section className="mt-10 max-w-md">
           <form onSubmit={submit} className="space-y-4">

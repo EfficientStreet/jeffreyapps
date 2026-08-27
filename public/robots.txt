@@ -13,6 +13,8 @@ Disallow: /logout
 Disallow: /passwords
 Disallow: /dashboard
 Disallow: /settings
+Disallow: /todos
+Disallow: /bookmarks
 Disallow: /profile
 Disallow: /letter_opener
 Disallow: /up

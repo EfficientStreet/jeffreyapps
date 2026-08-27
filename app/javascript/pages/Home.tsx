@@ -4,21 +4,21 @@ import { Button } from "@/components/ui/button"
 export default function Home() {
   return (
     <>
-      <Head title="Hello world">
+      <Head title="JeffreyApps">
         <meta
           name="description"
-          content="Starter landing page for the Build New Rails + Inertia template — replace this copy with the real product pitch."
+          content="JeffreyApps keeps your to-dos and your bookmarks together in one place, behind a single login."
         />
-        <meta property="og:title" content="Hello world" />
+        <meta property="og:title" content="JeffreyApps" />
         <meta
           property="og:description"
-          content="Starter landing page for the Build New Rails + Inertia template — replace this copy with the real product pitch."
+          content="JeffreyApps keeps your to-dos and your bookmarks together in one place, behind a single login."
         />
       </Head>
       <main className="mx-auto flex min-h-screen max-w-2xl flex-col items-center justify-center px-4 py-16 text-center">
-        <h1>Hello world.</h1>
+        <h1>JeffreyApps</h1>
         <p className="mt-2 max-w-md text-ink-muted">
-          Starter landing page for the Build New Rails + Inertia template.
+          Your to-dos and bookmarks in one place.
         </p>
         <div className="mt-6 flex items-center gap-3">
           <Button asChild>
