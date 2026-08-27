@@ -53,7 +53,13 @@ group :test do
   # Use system testing [https://guides.rubyonrails.org/testing.html#system-testing]
   gem "capybara"
   gem "selenium-webdriver"
+
+  # Stub outbound HTTP in tests
+  gem "webmock"
 end
+
+# HTML parsing for fetching a bookmarked page's <title>
+gem "nokogiri"
 
 gem "inertia_rails", "~> 3.11"
 

@@ -1,0 +1,20 @@
+rails_guides:
+  user: one
+  url: https://guides.rubyonrails.org
+  title: Ruby on Rails Guides
+  url_type: website
+  notes: Reference docs
+  created_at: <%= 2.days.ago %>
+
+youtube_talk:
+  user: one
+  url: https://www.youtube.com/watch?v=dQw4w9WgXcQ
+  title: A great talk
+  url_type: youtube
+  created_at: <%= 1.day.ago %>
+
+user_two_bookmark:
+  user: two
+  url: https://example.com
+  title: Example
+  url_type: website

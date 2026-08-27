@@ -11,8 +11,12 @@ Rails.application.routes.draw do
   get "dashboard", to: "dashboard#show", as: :dashboard
   get "settings",  to: "settings#show",  as: :settings
 
-  resources :todos,     only: %i[ index create update destroy ]
-  resources :bookmarks, only: %i[ index ]
+  resources :todos, only: %i[ index create update destroy ]
+
+  resources :bookmarks, only: %i[ index show create update destroy ]
+  resources :tags, only: %i[ index update destroy ] do
+    member { post :merge }
+  end
 
   namespace :admin do
     root to: redirect("/admin/users")
