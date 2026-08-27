@@ -1,0 +1,16 @@
+one_incomplete:
+  user: one
+  description: Buy milk
+  completed: false
+  created_at: <%= 1.day.ago %>
+
+one_completed:
+  user: one
+  description: Walk the dog
+  completed: true
+  created_at: <%= 2.days.ago %>
+
+two_incomplete:
+  user: two
+  description: Someone else's task
+  completed: false

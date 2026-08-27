@@ -11,7 +11,7 @@ Rails.application.routes.draw do
   get "dashboard", to: "dashboard#show", as: :dashboard
   get "settings",  to: "settings#show",  as: :settings
 
-  resources :todos,     only: %i[ index ]
+  resources :todos,     only: %i[ index create update destroy ]
   resources :bookmarks, only: %i[ index ]
 
   namespace :admin do
