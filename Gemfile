@@ -37,6 +37,9 @@ group :development, :test do
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
+
+  # Load ANTHROPIC_API_KEY / RESEND_API_KEY (and other local secrets) from .env
+  gem "dotenv-rails"
 end
 
 group :development do
@@ -58,8 +61,14 @@ group :test do
   gem "webmock"
 end
 
-# HTML parsing for fetching a bookmarked page's <title>
+# HTML parsing for fetching a bookmarked page's <title> and content
 gem "nokogiri"
+
+# Official Anthropic SDK, used to generate bookmark summaries [https://github.com/anthropics/anthropic-sdk-ruby]
+gem "anthropic"
+
+# Official Resend SDK, used to send share emails [https://github.com/resend/resend-ruby]
+gem "resend"
 
 gem "inertia_rails", "~> 3.11"
 

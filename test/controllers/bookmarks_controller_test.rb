@@ -24,6 +24,12 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
 
     delete bookmark_path(@bookmark)
     assert_redirected_to login_path
+
+    post regenerate_summary_bookmark_path(@bookmark)
+    assert_redirected_to login_path
+
+    post share_bookmark_path(@bookmark), params: { share: { email: "a@b.com", subject: "s", body: "b" } }
+    assert_redirected_to login_path
   end
 
   test "index lists only the current user's bookmarks" do
@@ -71,6 +77,19 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
     bookmark = Bookmark.last
     assert_equal "My Own Title", bookmark.title
     assert_equal "website", bookmark.url_type
+  end
+
+  test "create enqueues a summarization job for the new bookmark" do
+    log_in_as(@user)
+    result = UrlMetadataFetcher::Result.new(title: "Fetched Title", url_type: "website")
+
+    UrlMetadataFetcher.stub :call, result do
+      assert_enqueued_with(job: BookmarkSummarizationJob) do
+        post bookmarks_path, params: { bookmark: { url: "https://example.org" } }
+      end
+    end
+
+    assert_equal Bookmark.last.id, enqueued_jobs.last["arguments"].first
   end
 
   test "create rejects an invalid url without saving" do
@@ -132,6 +151,65 @@ class BookmarksControllerTest < ActionDispatch::IntegrationTest
   test "destroy on another user's bookmark 404s" do
     log_in_as(@user)
     delete bookmark_path(@other_bookmark)
+    assert_response :not_found
+  end
+
+  test "regenerate_summary resets status to pending and re-enqueues the job" do
+    log_in_as(@user)
+    @bookmark.update!(summary: "Old summary", summary_status: :completed)
+
+    assert_enqueued_with(job: BookmarkSummarizationJob, args: [ @bookmark.id ]) do
+      post regenerate_summary_bookmark_path(@bookmark)
+    end
+
+    assert_redirected_to bookmark_path(@bookmark)
+    assert @bookmark.reload.pending?
+  end
+
+  test "regenerate_summary on another user's bookmark 404s" do
+    log_in_as(@user)
+    post regenerate_summary_bookmark_path(@other_bookmark)
+    assert_response :not_found
+  end
+
+  test "share enqueues the email and redirects with a notice" do
+    log_in_as(@user)
+
+    assert_enqueued_email_with(ShareMailer, :share,
+      args: [ @bookmark, { to: "friend@example.com", subject: "Hi", body: "Check this out" } ]) do
+      post share_bookmark_path(@bookmark),
+        params: { share: { email: "friend@example.com", subject: "Hi", body: "Check this out" } }
+    end
+
+    assert_redirected_to bookmark_path(@bookmark)
+  end
+
+  test "share rejects an invalid email without sending" do
+    log_in_as(@user)
+
+    assert_no_enqueued_emails do
+      post share_bookmark_path(@bookmark),
+        params: { share: { email: "not-an-email", subject: "Hi", body: "Check this out" } }
+    end
+
+    assert_response :redirect
+  end
+
+  test "share rejects a blank subject or body without sending" do
+    log_in_as(@user)
+
+    assert_no_enqueued_emails do
+      post share_bookmark_path(@bookmark),
+        params: { share: { email: "friend@example.com", subject: "", body: "" } }
+    end
+
+    assert_response :redirect
+  end
+
+  test "share on another user's bookmark 404s" do
+    log_in_as(@user)
+    post share_bookmark_path(@other_bookmark),
+      params: { share: { email: "friend@example.com", subject: "Hi", body: "Check this out" } }
     assert_response :not_found
   end
 

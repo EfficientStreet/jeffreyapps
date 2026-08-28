@@ -32,6 +32,7 @@ class BookmarksController < ApplicationController
     sync_tag_names(bookmark, params.dig(:bookmark, :tag_names) || [])
 
     if bookmark.save
+      BookmarkSummarizationJob.perform_later(bookmark.id)
       redirect_to bookmarks_path, notice: "Bookmark added."
     else
       redirect_back fallback_location: bookmarks_path,
@@ -58,9 +59,43 @@ class BookmarksController < ApplicationController
     redirect_to bookmarks_path, notice: "Bookmark deleted."
   end
 
+  def regenerate_summary
+    bookmark = Current.user.bookmarks.find(params[:id])
+    bookmark.update!(summary_status: :pending)
+    BookmarkSummarizationJob.perform_later(bookmark.id)
+    redirect_to bookmark_path(bookmark), notice: "Regenerating summary…"
+  end
+
+  def share
+    bookmark = Current.user.bookmarks.find(params[:id])
+    errors = share_errors(share_params)
+
+    if errors.present?
+      return redirect_back fallback_location: bookmark_path(bookmark), inertia: { errors: errors }
+    end
+
+    ShareMailer.share(
+      bookmark,
+      to: share_params[:email],
+      subject: share_params[:subject],
+      body: share_params[:body]
+    ).deliver_later
+
+    redirect_to bookmark_path(bookmark), notice: "Bookmark shared with #{share_params[:email]}."
+  end
+
   private
     def create_params = params.require(:bookmark).permit(:url, :title, :notes)
     def update_params = params.require(:bookmark).permit(:title, :notes)
+    def share_params = params.require(:share).permit(:email, :subject, :body)
+
+    def share_errors(attrs)
+      errors = {}
+      errors[:email] = "must be a valid email address" unless attrs[:email].to_s.match?(URI::MailTo::EMAIL_REGEXP)
+      errors[:subject] = "can't be blank" if attrs[:subject].blank?
+      errors[:body] = "can't be blank" if attrs[:body].blank?
+      errors
+    end
 
     # Case-insensitive find-or-create so tagging with "Ruby" reuses an
     # existing "ruby" tag rather than colliding with the case-insensitive

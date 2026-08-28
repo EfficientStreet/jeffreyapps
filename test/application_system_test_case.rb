@@ -16,5 +16,7 @@ Capybara.register_driver :headless_chrome_new do |app|
 end
 
 class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
+  include ActiveJob::TestHelper
+
   driven_by :headless_chrome_new, screen_size: [ 1400, 1400 ]
 end

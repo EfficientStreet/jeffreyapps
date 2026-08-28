@@ -18,6 +18,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { TagInput } from "./TagInput"
+import { usePollWhilePending } from "@/hooks/usePollWhilePending"
 import type { PageProps } from "@/types/inertia"
 
 type BookmarkTag = { id: number; name: string }
@@ -43,6 +44,8 @@ const DESCRIPTION =
 export default function BookmarksIndex() {
   const { props } = usePage<PageProps<BookmarksIndexProps>>()
   const { bookmarks, tags } = props
+
+  usePollWhilePending(bookmarks.some((bookmark) => bookmark.summary_status === "pending"))
 
   const [selectedTagId, setSelectedTagId] = React.useState<number | null>(null)
 
@@ -162,6 +165,7 @@ export default function BookmarksIndex() {
                         </Badge>
                       ))}
                     </div>
+                    <SummaryPreview bookmark={bookmark} />
                   </div>
                 </Link>
               </li>
@@ -171,6 +175,24 @@ export default function BookmarksIndex() {
       </AppShell>
     </>
   )
+}
+
+const SUMMARY_PREVIEW_MAX_CHARS = 140
+
+function SummaryPreview({ bookmark }: { bookmark: BookmarkRow }) {
+  if (bookmark.summary_status === "pending") {
+    return <p className="mt-1.5 text-xs text-ink-muted">Summarizing&hellip;</p>
+  }
+  if (bookmark.summary_status === "failed") {
+    return <p className="mt-1.5 text-xs text-ink-muted">Summary unavailable</p>
+  }
+  if (!bookmark.summary) return null
+
+  const preview =
+    bookmark.summary.length > SUMMARY_PREVIEW_MAX_CHARS
+      ? `${bookmark.summary.slice(0, SUMMARY_PREVIEW_MAX_CHARS).trimEnd()}…`
+      : bookmark.summary
+  return <p className="mt-1.5 text-xs text-ink-muted">{preview}</p>
 }
 
 function AddBookmarkDialog({ tags, triggerLabel }: { tags: BookmarkTag[]; triggerLabel?: string }) {

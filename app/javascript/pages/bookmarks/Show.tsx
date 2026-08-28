@@ -1,13 +1,14 @@
 import * as React from "react"
 import { FormEvent } from "react"
 import { Head, Link, router, useForm, usePage } from "@inertiajs/react"
-import { ArrowLeft, Globe, Pencil, Sparkles, Trash2, Video } from "lucide-react"
+import { ArrowLeft, Globe, Mail, Pencil, RefreshCw, Trash2, Video } from "lucide-react"
 import { AppShell } from "@/components/AppShell"
 import { PageHeader } from "@/components/PageHeader"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { DataTable, DataRow } from "@/components/ui/data-table"
+import { usePollWhilePending } from "@/hooks/usePollWhilePending"
 import {
   Dialog,
   DialogContent,
@@ -43,6 +44,8 @@ export default function BookmarksShow() {
   const { props } = usePage<PageProps<BookmarksShowProps>>()
   const { bookmark, all_tags } = props
 
+  usePollWhilePending(bookmark.summary_status === "pending")
+
   function updateTags(names: string[]) {
     router.patch(
       `/bookmarks/${bookmark.id}`,
@@ -68,6 +71,7 @@ export default function BookmarksShow() {
           }
           actions={
             <>
+              <ShareBookmarkDialog bookmark={bookmark} />
               <EditBookmarkDialog bookmark={bookmark} />
               <DeleteBookmarkDialog bookmark={bookmark} />
             </>
@@ -95,7 +99,7 @@ export default function BookmarksShow() {
             </span>
           </DataRow>
           <DataRow title="Summary">
-            <SummaryPlaceholder />
+            <SummarySection bookmark={bookmark} />
           </DataRow>
           <DataRow title="Notes">
             {bookmark.notes || <span className="text-ink-muted">&mdash;</span>}
@@ -116,17 +120,146 @@ export default function BookmarksShow() {
   )
 }
 
-// AI summaries arrive in a later milestone. Until then the summary area shows a
-// single calm placeholder rather than any working-pipeline state.
-function SummaryPlaceholder() {
+function SummarySection({ bookmark }: { bookmark: BookmarkDetail }) {
+  const [regenerating, setRegenerating] = React.useState(false)
+  const isPending = bookmark.summary_status === "pending"
+
+  function regenerate() {
+    setRegenerating(true)
+    router.post(
+      `/bookmarks/${bookmark.id}/regenerate_summary`,
+      {},
+      { preserveScroll: true, onFinish: () => setRegenerating(false) },
+    )
+  }
+
   return (
-    <div className="flex items-start gap-3 rounded-md border border-hairline bg-surface px-4 py-3">
-      <Sparkles className="mt-0.5 h-4 w-4 shrink-0 text-ink-muted" />
-      <div>
-        <p className="font-medium text-ink-display">AI summary</p>
-        <p className="mt-0.5 text-sm text-ink-muted">Summaries aren&rsquo;t available yet.</p>
-      </div>
+    <div className="flex items-start justify-between gap-4">
+      {bookmark.summary_status === "completed" && bookmark.summary && (
+        <p className="text-ink-body">{bookmark.summary}</p>
+      )}
+      {isPending && <p className="text-ink-muted">Summarizing&hellip;</p>}
+      {bookmark.summary_status === "failed" && (
+        <p className="text-ink-muted">Summary unavailable</p>
+      )}
+      <Button
+        variant="soft"
+        size="sm"
+        disabled={isPending || regenerating}
+        onClick={regenerate}
+        className="shrink-0"
+      >
+        <RefreshCw className="h-3.5 w-3.5" /> {isPending ? "Summarizing…" : "Regenerate"}
+      </Button>
     </div>
+  )
+}
+
+function buildDefaultBody(bookmark: BookmarkDetail) {
+  const lines = [ "I thought you'd find this interesting:", "", bookmark.title ]
+  if (bookmark.summary_status === "completed" && bookmark.summary) {
+    lines.push("", bookmark.summary)
+  }
+  lines.push("", bookmark.url)
+  return lines.join("\n")
+}
+
+function ShareBookmarkDialog({ bookmark }: { bookmark: BookmarkDetail }) {
+  const [open, setOpen] = React.useState(false)
+  const { props } = usePage<PageProps>()
+  const errors = props.errors ?? {}
+
+  const form = useForm({
+    email: "",
+    subject: `Check out: ${bookmark.title}`,
+    body: buildDefaultBody(bookmark),
+  })
+
+  // Recompute defaults each time the dialog opens, in case the summary
+  // finished generating (or was regenerated) since it was last opened.
+  function handleOpenChange(nextOpen: boolean) {
+    if (nextOpen) {
+      form.setData({
+        email: "",
+        subject: `Check out: ${bookmark.title}`,
+        body: buildDefaultBody(bookmark),
+      })
+    }
+    setOpen(nextOpen)
+  }
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault()
+    // Wrap explicitly under `share:` — none of these fields are real Bookmark
+    // columns, so Rails' automatic params-wrapping wouldn't nest them correctly.
+    form.transform((data) => ({ share: data }))
+    form.post(`/bookmarks/${bookmark.id}/share`, {
+      preserveScroll: true,
+      onSuccess: () => setOpen(false),
+    })
+  }
+
+  return (
+    <Dialog open={open} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        <Button variant="secondary">
+          <Mail className="h-4 w-4" /> Share
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Share this bookmark</DialogTitle>
+          <DialogDescription>Send it to a friend by email.</DialogDescription>
+        </DialogHeader>
+        <form onSubmit={submit} className="space-y-4">
+          <div className="space-y-2">
+            <label htmlFor="share-email">Recipient email</label>
+            <Input
+              id="share-email"
+              type="email"
+              required
+              placeholder="friend@example.com"
+              aria-invalid={!!errors.email}
+              value={form.data.email}
+              onChange={(e) => form.setData("email", e.target.value)}
+            />
+            {errors.email && <p className="text-xs text-danger-display">{errors.email}</p>}
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="share-subject">Subject</label>
+            <Input
+              id="share-subject"
+              type="text"
+              required
+              aria-invalid={!!errors.subject}
+              value={form.data.subject}
+              onChange={(e) => form.setData("subject", e.target.value)}
+            />
+            {errors.subject && <p className="text-xs text-danger-display">{errors.subject}</p>}
+          </div>
+          <div className="space-y-2">
+            <label htmlFor="share-body">Message</label>
+            <Textarea
+              id="share-body"
+              rows={7}
+              required
+              aria-invalid={!!errors.body}
+              value={form.data.body}
+              onChange={(e) => form.setData("body", e.target.value)}
+            />
+            {errors.body && <p className="text-xs text-danger-display">{errors.body}</p>}
+          </div>
+          <DialogFooter>
+            <Button type="button" variant="ghost" onClick={() => setOpen(false)}>
+              Cancel
+            </Button>
+            <Button type="submit" disabled={form.processing}>
+              {form.processing ? "Sending…" : "Send"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
   )
 }
 

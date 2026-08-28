@@ -36,12 +36,27 @@ class BookmarksTest < ApplicationSystemTestCase
     assert_text "Example Domain"
     assert_text "Website"
 
-    # --- Detail view: neutral summary placeholder, no regenerate/share ---
+    # Simulate the background summarization job finishing. The job itself is
+    # unit-tested in test/jobs/bookmark_summarization_job_test.rb; here we just
+    # drive the DB the in-process test server shares, so the detail view renders
+    # a terminal (non-polling) summary state.
+    Bookmark.order(:created_at).last.update!(
+      summary: "A concise test summary of the page.", summary_status: :completed
+    )
+
+    # --- Detail view: summary text + Regenerate + Share controls ---
     click_link "Example Domain"
-    assert_text "AI summary"
-    assert_text "Summaries aren’t available yet."
-    assert_no_text "Regenerate"
-    assert_no_text "Share"
+    assert_text "A concise test summary of the page."
+    assert_selector "button", text: "Regenerate"
+    assert_selector "button", text: "Share"
+
+    # Share dialog pre-fills an editable subject and message
+    open_modal_via "Share"
+    within(".modal") do
+      assert_field "Subject", with: "Check out: Example Domain"
+      assert_field "Recipient email"
+      click_button "Cancel"
+    end
 
     # --- Edit title + notes ---
     open_modal_via "Edit"

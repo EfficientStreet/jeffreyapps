@@ -13,7 +13,12 @@ Rails.application.routes.draw do
 
   resources :todos, only: %i[ index create update destroy ]
 
-  resources :bookmarks, only: %i[ index show create update destroy ]
+  resources :bookmarks, only: %i[ index show create update destroy ] do
+    member do
+      post :regenerate_summary
+      post :share
+    end
+  end
   resources :tags, only: %i[ index update destroy ] do
     member { post :merge }
   end
