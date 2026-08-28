@@ -19,6 +19,6 @@ class SessionsController < ApplicationController
 
   def destroy
     terminate_session
-    redirect_to login_path
+    redirect_to root_path
   end
 end

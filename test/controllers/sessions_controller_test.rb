@@ -59,7 +59,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "DELETE /logout terminates the session and redirects to login" do
+  test "DELETE /logout terminates the session and redirects to the portfolio home" do
     post login_path, params: {
       email: @user.email,
       password: @password
@@ -69,7 +69,7 @@ class SessionsControllerTest < ActionDispatch::IntegrationTest
       delete logout_path
     end
 
-    assert_redirected_to login_path
+    assert_redirected_to root_path
 
     get dashboard_path
     assert_redirected_to login_path
