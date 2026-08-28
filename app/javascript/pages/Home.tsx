@@ -15,7 +15,7 @@ type HomeProps = {
 }
 
 const DESCRIPTION =
-  "A portfolio of the web apps, AI skills and agents, and websites I've built."
+  "A portfolio of the web apps, AI skills and agents, and websites I've built through online coursework and/or on my own."
 
 function isExternal(href: string) {
   return /^https?:\/\//.test(href)
