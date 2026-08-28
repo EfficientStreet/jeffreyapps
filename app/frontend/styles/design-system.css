@@ -202,6 +202,11 @@
   .badge-signal  { @apply bg-signal-faded text-signal-display; }
   .badge-muted   { @apply bg-transparent text-ink-muted border border-hairline; }
   .badge-solid   { @apply bg-accent text-page; }
+  /* Platform badges — fixed brand colors, identical in light and dark. */
+  .badge-youtube { @apply bg-red-600 text-white; }
+  .badge-website { @apply bg-slate-500 text-white; }
+  .badge-tiktok  { @apply bg-black text-white; }
+  .badge-social  { @apply bg-blue-600 text-white; }
 
   /* Toggle buttons (pill-shaped on/off) */
   .toggle-button {

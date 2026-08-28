@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { DataTable, DataRow } from "@/components/ui/data-table"
+import { Badge } from "@/components/ui/badge"
+import { urlTypeMeta, type UrlType } from "@/lib/url-type"
 import { usePollWhilePending } from "@/hooks/usePollWhilePending"
 import {
   Dialog,
@@ -29,7 +31,7 @@ type BookmarkDetail = {
   id: number
   url: string
   title: string
-  url_type: "website" | "youtube"
+  url_type: UrlType
   notes: string | null
   summary: string | null
   summary_status: SummaryStatus
@@ -90,12 +92,14 @@ export default function BookmarksShow() {
           </DataRow>
           <DataRow title="Type">
             <span className="inline-flex items-center gap-1.5">
-              {bookmark.url_type === "youtube" ? (
+              {bookmark.url_type === "youtube" || bookmark.url_type === "tiktok" ? (
                 <Video className="h-4 w-4 text-ink-muted" />
               ) : (
                 <Globe className="h-4 w-4 text-ink-muted" />
               )}
-              {bookmark.url_type === "youtube" ? "YouTube" : "Website"}
+              <Badge tone={urlTypeMeta(bookmark.url_type).tone}>
+                {urlTypeMeta(bookmark.url_type).label}
+              </Badge>
             </span>
           </DataRow>
           <DataRow title="Summary">

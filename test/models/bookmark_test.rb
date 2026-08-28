@@ -69,6 +69,18 @@ class BookmarkTest < ActiveSupport::TestCase
     end
   end
 
+  test ".detect_url_type recognizes tiktok, linkedin, and facebook hosts" do
+    {
+      "tiktok" => %w[https://www.tiktok.com/@creator/video/123 https://vm.tiktok.com/abc],
+      "linkedin" => %w[https://www.linkedin.com/in/someone https://lnkd.in/abc],
+      "facebook" => %w[https://www.facebook.com/page https://fb.watch/abc]
+    }.each do |type, urls|
+      urls.each do |url|
+        assert_equal type, Bookmark.detect_url_type(url), "expected #{url} to be #{type}"
+      end
+    end
+  end
+
   test ".detect_url_type falls back to website for everything else" do
     assert_equal "website", Bookmark.detect_url_type("https://example.com")
     assert_equal "website", Bookmark.detect_url_type("not a url")

@@ -11,12 +11,18 @@ const badgeVariants = cva("badge", {
       signal: "badge-signal",
       muted: "badge-muted",
       solid: "badge-solid",
+      youtube: "badge-youtube",
+      website: "badge-website",
+      tiktok: "badge-tiktok",
+      social: "badge-social",
     },
   },
   defaultVariants: {
     tone: "neutral",
   },
 });
+
+export type BadgeTone = NonNullable<VariantProps<typeof badgeVariants>["tone"]>;
 
 export interface BadgeProps
   extends React.HTMLAttributes<HTMLSpanElement>,

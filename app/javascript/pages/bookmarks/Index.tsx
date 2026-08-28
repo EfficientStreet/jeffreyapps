@@ -19,6 +19,7 @@ import {
 } from "@/components/ui/dialog"
 import { TagInput } from "./TagInput"
 import { usePollWhilePending } from "@/hooks/usePollWhilePending"
+import { urlTypeMeta, type UrlType } from "@/lib/url-type"
 import type { PageProps } from "@/types/inertia"
 
 type BookmarkTag = { id: number; name: string }
@@ -27,7 +28,7 @@ type BookmarkRow = {
   id: number
   url: string
   title: string
-  url_type: "website" | "youtube"
+  url_type: UrlType
   notes: string | null
   summary: string | null
   summary_status: "pending" | "completed" | "failed"
@@ -153,7 +154,7 @@ export default function BookmarksIndex() {
                   href={`/bookmarks/${bookmark.id}`}
                   className="flex items-start gap-3 px-4 py-3 no-underline hover:bg-surface"
                 >
-                  {bookmark.url_type === "youtube" ? (
+                  {bookmark.url_type === "youtube" || bookmark.url_type === "tiktok" ? (
                     <Video className="mt-0.5 h-4 w-4 shrink-0 text-ink-muted" />
                   ) : (
                     <Globe className="mt-0.5 h-4 w-4 shrink-0 text-ink-muted" />
@@ -162,8 +163,8 @@ export default function BookmarksIndex() {
                     <div className="truncate text-sm font-medium text-ink-display">{bookmark.title}</div>
                     <div className="truncate text-xs text-ink-muted">{bookmark.url}</div>
                     <div className="mt-1.5 flex flex-wrap items-center gap-1">
-                      <Badge tone={bookmark.url_type === "youtube" ? "signal" : "muted"}>
-                        {bookmark.url_type === "youtube" ? "YouTube" : "Website"}
+                      <Badge tone={urlTypeMeta(bookmark.url_type).tone}>
+                        {urlTypeMeta(bookmark.url_type).label}
                       </Badge>
                       {bookmark.tags.map((tag) => (
                         <Badge key={tag.id} tone="neutral">

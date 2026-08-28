@@ -3,6 +3,7 @@ import { ArrowRight, Bookmark as BookmarkIcon, Globe, ListChecks, Video } from "
 import { AppShell } from "@/components/AppShell"
 import { PageHeader } from "@/components/PageHeader"
 
+import { type UrlType } from "@/lib/url-type"
 import type { PageProps } from "@/types/inertia"
 
 type OpenTodo = { id: number; description: string }
@@ -10,7 +11,7 @@ type RecentBookmark = {
   id: number
   title: string
   url: string
-  url_type: "website" | "youtube"
+  url_type: UrlType
 }
 
 type DashboardProps = {
@@ -93,7 +94,7 @@ export default function Dashboard() {
                       href={`/bookmarks/${bookmark.id}`}
                       className="flex items-center gap-2 text-sm text-ink-body no-underline hover:text-ink-display"
                     >
-                      {bookmark.url_type === "youtube" ? (
+                      {bookmark.url_type === "youtube" || bookmark.url_type === "tiktok" ? (
                         <Video className="h-3.5 w-3.5 shrink-0 text-ink-muted" />
                       ) : (
                         <Globe className="h-3.5 w-3.5 shrink-0 text-ink-muted" />
