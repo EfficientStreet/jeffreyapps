@@ -61,20 +61,10 @@ class TodosTest < ApplicationSystemTestCase
   end
 
   private
-    # The add box is a controlled React input. Right after an Inertia client-side
-    # navigation the page's HTML is present (so `assert_selector "h1"` passes) a
-    # beat before React finishes hydrating it; anything typed in that window is
-    # wiped by the first render. Re-fill until the value sticks, then submit.
+    # The add box is a controlled React input that drops keystrokes typed before
+    # hydration finishes; see ApplicationSystemTestCase#fill_in_hydrated.
     def add_todo(description)
-      fill_in "todo-description", with: description
-      unless find_field("todo-description").value == description
-        10.times do
-          sleep 0.2
-          fill_in "todo-description", with: description
-          break if find_field("todo-description").value == description
-        end
-      end
-      assert_field "todo-description", with: description
+      fill_in_hydrated "todo-description", with: description
       click_button "Add"
     end
 end

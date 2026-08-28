@@ -136,17 +136,9 @@ class BookmarksTest < ApplicationSystemTestCase
       assert_selector ".modal"
     end
 
-    # Right after Inertia hydration a controlled React input can drop the first
-    # keystrokes; re-fill until the value sticks.
+    # Controlled React inputs drop keystrokes typed before hydration; see
+    # ApplicationSystemTestCase#fill_in_hydrated.
     def set_controlled_field(locator, value)
-      fill_in locator, with: value
-      return if find_field(locator).value == value
-
-      10.times do
-        sleep 0.2
-        fill_in locator, with: value
-        break if find_field(locator).value == value
-      end
-      assert_field locator, with: value
+      fill_in_hydrated locator, with: value
     end
 end

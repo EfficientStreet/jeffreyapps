@@ -19,4 +19,27 @@ class ApplicationSystemTestCase < ActionDispatch::SystemTestCase
   include ActiveJob::TestHelper
 
   driven_by :headless_chrome_new, screen_size: [ 1400, 1400 ]
+
+  private
+    # Type into a controlled React input reliably.
+    #
+    # `fill_in`'s bulk value-set can land before the input's onChange handler is
+    # wired (right after Inertia hydration or a modal mount), so the first render
+    # wipes it. Under `--headless=new` a plain `fill_in` can also silently miss
+    # if focus never landed on the freshly mounted element. So: re-resolve the
+    # field each attempt, click it to force focus, clear it, then type
+    # character-by-character with `send_keys` (which routes through the real key
+    # event pipeline React listens on). Retry until the value sticks.
+    def fill_in_hydrated(locator, with:)
+      value = with
+      10.times do |i|
+        sleep 0.2 unless i.zero?
+        field = find_field(locator)
+        field.click
+        field.set("") unless field.value.to_s.empty?
+        field.send_keys(value)
+        return if field.value == value
+      end
+      assert_field locator, with: value
+    end
 end
