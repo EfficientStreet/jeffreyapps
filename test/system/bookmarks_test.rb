@@ -21,7 +21,7 @@ class BookmarksTest < ApplicationSystemTestCase
     fill_in "Password", with: "password"
     click_button "Log in"
     # The Inertia login POST is async; wait for the redirect before navigating.
-    assert_selector "h1", text: "Home"
+    assert_selector "h1", text: "Dashboard"
 
     visit "/bookmarks"
     assert_text "You haven’t added any bookmarks yet"

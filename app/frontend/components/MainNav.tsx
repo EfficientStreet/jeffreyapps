@@ -5,6 +5,7 @@ import {
   ChevronsLeft,
   ChevronsRight,
   Home,
+  LayoutDashboard,
   ListTodo,
   LogOut,
   Menu,
@@ -38,10 +39,16 @@ export type NavItemDef = {
 // Home stays pinned first; everything after it is alphabetical by label.
 const DEFAULT_NAV_ITEMS: NavItemDef[] = [
   {
-    href: "/dashboard",
+    href: "/",
     icon: Home,
     label: "Home",
-    match: (url) => url === "/" || url.startsWith("/dashboard"),
+    match: (url) => url === "/",
+  },
+  {
+    href: "/dashboard",
+    icon: LayoutDashboard,
+    label: "Dashboard",
+    match: (url) => url.startsWith("/dashboard"),
   },
   {
     href: "/bookmarks",

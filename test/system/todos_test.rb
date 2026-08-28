@@ -15,7 +15,7 @@ class TodosTest < ApplicationSystemTestCase
     click_button "Log in"
 
     # Wait for the async Inertia login POST to land before navigating.
-    assert_selector "h1", text: "Home"
+    assert_selector "h1", text: "Dashboard"
 
     click_link "To-Doer"
     assert_selector "h1", text: "Jamie One’s To-Dos"

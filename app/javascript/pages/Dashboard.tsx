@@ -33,14 +33,14 @@ export default function Dashboard() {
 
   return (
     <>
-      <Head title="Home">
-        <meta name="description" content="Your JeffreyApps home — a snapshot of your open to-dos and recent bookmarks." />
-        <meta property="og:title" content="Home" />
-        <meta property="og:description" content="Your JeffreyApps home — a snapshot of your open to-dos and recent bookmarks." />
+      <Head title="Dashboard">
+        <meta name="description" content="Your JeffreyApps dashboard — a snapshot of your open to-dos and recent bookmarks." />
+        <meta property="og:title" content="Dashboard" />
+        <meta property="og:description" content="Your JeffreyApps dashboard — a snapshot of your open to-dos and recent bookmarks." />
       </Head>
       <AppShell>
         <PageHeader
-          title="Home"
+          title="Dashboard"
           description={`Welcome back, ${greetingName(user?.name, user?.email)}.`}
         />
 
