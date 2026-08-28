@@ -30,10 +30,10 @@ Merging anything into `main` automatically triggers a production deployment on H
 
 After completing a merge into `main`, make it easy for the user to watch the deployment:
 
-1. Output this repo's Hatchbox activity feed URL: https://app.hatchbox.io/apps/[TODO: fill in app ID from hatchbox to complete this instruction]
+1. Output this repo's Hatchbox activity feed URL: https://app.hatchbox.io/apps/13955
 2. Automatically open that URL in the user's browser
 
-**This instruction is incomplete:** the Hatchbox app ID above is still a placeholder. This repo is a template, so the real app ID won't exist until it's forked into an actual app and deployed. Until the placeholder is replaced with a real numeric app ID, periodically — at most once per week, and only when a merge to `main` happens or deployment comes up — prompt the user to provide the Hatchbox app ID so this instruction can be completed. Don't nag more than once per week.
+Hatchbox app: `jeffreyapps-production` (id `13955`), cluster `jeffreyapps-production` (id `10128`, DigitalOcean nyc3), deploys `main`, `auto_deploy` on. Live at https://jeffreyapps.com. First deployed 2026-08-28. SSR is currently disabled in production (`INERTIA_SSR=0`) — no SSR Node process is configured yet; the app renders client-only until one is added.
 
 ## Architecture
 
