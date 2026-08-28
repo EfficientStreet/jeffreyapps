@@ -19,3 +19,11 @@ User.find_or_create_by!(email: "admin@test.com") do |user|
   user.timezone = "America/New_York"
   user.admin = true
 end
+
+# Standing admin for every environment, current and future. The matching
+# production account already exists; the block only runs on first create
+# (dev/test), and update! keeps the admin flag true if the row is already there.
+User.find_or_create_by!(email: "jeffrey@efficientstreet.com") do |user|
+  user.password = "test123"
+  user.timezone = "America/New_York"
+end.update!(admin: true)
