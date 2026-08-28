@@ -4,7 +4,12 @@ import { Button } from "@/components/ui/button"
 
 import type { PageProps } from "@/types/inertia"
 
-type PortfolioItem = { name: string; description: string; href: string }
+type PortfolioItem = {
+  name: string
+  description: string
+  href: string
+  created_by: string
+}
 
 type HomeProps = {
   // Optional so the SSR entrypoint can render the shell even if invoked
@@ -31,6 +36,9 @@ function PortfolioCard({ item }: { item: PortfolioItem }) {
         <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-ink-muted transition-colors group-hover:text-accent" />
       </div>
       <p className="mt-2 text-sm text-ink-muted">{item.description}</p>
+      <p className="mt-2 text-xs text-ink-muted">
+        Created by {item.created_by}
+      </p>
     </>
   )
 

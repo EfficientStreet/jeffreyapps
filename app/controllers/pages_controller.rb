@@ -9,12 +9,14 @@ class PagesController < ApplicationController
     {
       name: "LinksShare",
       description: "Save any link and get an automatic AI summary of the page. Organize with tags, filter your list, and share a bookmark by email.",
-      href: "/login"
+      href: "/login",
+      created_by: "Jeffrey Smith / Brian Casel / Claude Code"
     },
     {
       name: "To-Doer",
       description: "A fast, low-friction task list. Add, complete, and re-open items, with finished tasks tucked below the ones still open.",
-      href: "/login"
+      href: "/login",
+      created_by: "Jeffrey Smith / Brian Casel / Claude Code"
     }
   ].freeze
 
@@ -22,17 +24,20 @@ class PagesController < ApplicationController
     {
       name: "hindsight",
       description: "A self-improvement skill for AI coding assistants -- reviews a session end-to-end and saves only the durable process lessons as persistent memory.",
-      href: "https://github.com/EfficientStreet/hindsight"
+      href: "https://github.com/EfficientStreet/hindsight",
+      created_by: "Jeffrey Smith / Claude Code"
     },
     {
       name: "website-building-skill",
       description: "Based on Nate Herk's Awesome Website Builder Skill at AI Automation Society, with additional pre- and post-production prompts to dive deeper into website design.",
-      href: "https://github.com/EfficientStreet/website-building-skill"
+      href: "https://github.com/EfficientStreet/website-building-skill",
+      created_by: "Nate Herk / Jeffrey Smith / Claude Code"
     },
     {
       name: "youtube-subscriptions-ingest",
       description: "Pulls YouTube subscription metadata into a real cross-linked knowledge graph in your second-brain vault.",
-      href: "https://github.com/EfficientStreet/youtube-subscriptions-ingest"
+      href: "https://github.com/EfficientStreet/youtube-subscriptions-ingest",
+      created_by: "Jeffrey Smith / Claude Code"
     }
   ].freeze
 
@@ -40,7 +45,8 @@ class PagesController < ApplicationController
     {
       name: "efficientstreet.com",
       description: "The site for Efficient Street, a digital efficiency studio that streamlines businesses through automation, integration, and marketing. Tagline: \"Automate. Integrate. Elevate.\"",
-      href: "https://efficientstreet.com"
+      href: "https://efficientstreet.com",
+      created_by: "Jeffrey Smith / Claude Code"
     }
   ].freeze
 
