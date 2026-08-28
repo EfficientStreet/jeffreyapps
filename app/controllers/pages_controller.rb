@@ -10,13 +10,13 @@ class PagesController < ApplicationController
       name: "LinksShare",
       description: "Save any link and get an automatic AI summary of the page. Organize with tags, filter your list, and share a bookmark by email.",
       href: "/login",
-      created_by: "Jeffrey Smith / Brian Casel / Claude Code"
+      created_by: "Jeffrey Smith / Brian Casel / Ruby On Rails / Claude Code"
     },
     {
       name: "To-Doer",
       description: "A fast, low-friction task list. Add, complete, and re-open items, with finished tasks tucked below the ones still open.",
       href: "/login",
-      created_by: "Jeffrey Smith / Brian Casel / Claude Code"
+      created_by: "Jeffrey Smith / Brian Casel / Ruby On Rails / Claude Code"
     }
   ].freeze
 
