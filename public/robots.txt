@@ -13,6 +13,9 @@ Disallow: /logout
 Disallow: /passwords
 Disallow: /dashboard
 Disallow: /settings
+Disallow: /todos
+Disallow: /bookmarks
+Disallow: /tags
 Disallow: /profile
 Disallow: /letter_opener
 Disallow: /up
