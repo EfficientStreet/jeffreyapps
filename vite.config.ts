@@ -23,7 +23,7 @@ const redirectToRails = (): Plugin => ({
   },
 })
 
-export default defineConfig({
+export default defineConfig(({ command }) => ({
   plugins: [
     react(),
     tailwindcss(),
@@ -35,6 +35,16 @@ export default defineConfig({
       '@': fileURLToPath(new URL('./app/frontend', import.meta.url)),
     },
   },
+  // Any `vite build` — the real production build, the `--ssr` bundle, AND the
+  // per-environment auto-builds vite_ruby runs for non-dev Rails envs (e.g.
+  // `--mode test` for `bin/rails test:system`) — must ship the PRODUCTION
+  // React runtime. Without this, `vite build --mode test` defines
+  // `process.env.NODE_ENV` as "development", so React's dev build ends up in
+  // the system-test bundle; its scheduler doesn't flush state updates under
+  // headless Chrome, leaving every page rendered but non-interactive.
+  ...(command === 'build'
+    ? { define: { 'process.env.NODE_ENV': JSON.stringify('production') } }
+    : {}),
   // SSR. `bin/vite build --ssr` bundles app/javascript/ssr/ssr.tsx (the
   // vite-plugin-ruby default `ssrEntrypoint`) into public/vite-ssr/ssr.js.
   // noExternal: true bundles every dependency into the output so the Node
@@ -42,4 +52,4 @@ export default defineConfig({
   ssr: {
     noExternal: true,
   },
-})
+}))
