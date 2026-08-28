@@ -129,7 +129,16 @@ Inertia SSR is wired up so search engines and LLM crawlers (GPTBot, ClaudeBot, P
 
 **SSR smoke test.** `bin/rails test test/integration/ssr_smoke_test.rb` builds the SSR bundle, boots the Node server, hits `/render`, and asserts non-empty markup. It also runs as part of `bin/rails test`. Use it to catch breakage from changes to entrypoints, shared providers, or anything imported during SSR.
 
-Production deployment is host-specific (Render, Fly, Heroku, container, bare metal, etc.) and not prescribed here. The Inertia Rails renderer silently falls back to a client-only render if the SSR Node process is unreachable, so the smoke test is your guardrail — keep it green and the SSR pipeline works.
+The Inertia Rails renderer silently falls back to a client-only render if the SSR Node process is unreachable, so the smoke test is your guardrail — keep it green and the SSR pipeline works.
+
+**SSR in production (Hatchbox).** SSR is live on `jeffreyapps-production` (app `13955`):
+
+- **Env:** `INERTIA_SSR=1` in the app Environment.
+- **Process:** an `ssr` process on the **web** role, start command `bin/vite ssr`, restart-on-deploy checked. It runs `node public/vite-ssr/ssr.js` and listens on `13714`.
+- **`lib/tasks/vite_full_rebuild.rake` is load-bearing — do not remove it.** It makes `vite:clobber` a prerequisite of `assets:precompile`. Hatchbox symlinks `tmp/` to the app's `shared/` dir, so vite_ruby's build-skip digest (`tmp/cache/vite`) persists across releases, but the build *output* (`public/vite/`, `public/vite-ssr/`) lives inside each release and starts empty. Without the clobber, a deploy where no watched source changed logs `Skipping vite build`, never writes `ssr.js` into the new release, and the `ssr` process then crash-loops with `No ssr entrypoint found 'public/vite-ssr/ssr.{js,mjs,cjs}'` — Rails falls back to client-only and public pages go back to an empty `<div id="app">`.
+- **Never run two deploys at once.** Pushing to `main` triggers an auto-deploy; firing a second deploy (e.g. via the Hatchbox API) while it runs gives you two deploys sharing `shared/tmp/cache/vite`. The second one's SSR build step sees the first's fresh digest, logs `Skipping vite build`, and produces a release with no `ssr.js` — which can win promotion. If SSR breaks after a deploy, check the promoted deploy log for `building ssr environment` + a `public/vite-ssr/ssr.js` line; if it's missing, trigger **one** clean deploy with nothing else running.
+- **Verify after any SSR-affecting deploy:** `curl -s https://jeffreyapps.com/ | grep -o '<div id="app"[^>]*>.\{0,80\}'` — the div must contain rendered markup, not be empty. The `ssr` process page in Hatchbox should show `Active: active (running)`.
+- Changing `INERTIA_SSR` (or any env var) needs an app **Restart** to take effect, not just the env-var save.
 
 **Keeping SSR working.**
 
