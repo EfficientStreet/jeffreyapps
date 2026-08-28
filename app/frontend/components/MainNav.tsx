@@ -35,6 +35,7 @@ export type NavItemDef = {
   match: (url: string) => boolean
 }
 
+// Home stays pinned first; everything after it is alphabetical by label.
 const DEFAULT_NAV_ITEMS: NavItemDef[] = [
   {
     href: "/dashboard",
@@ -43,16 +44,16 @@ const DEFAULT_NAV_ITEMS: NavItemDef[] = [
     match: (url) => url === "/" || url.startsWith("/dashboard"),
   },
   {
-    href: "/todos",
-    icon: ListTodo,
-    label: "To-Dos",
-    match: (url) => url.startsWith("/todos"),
-  },
-  {
     href: "/bookmarks",
     icon: Bookmark,
-    label: "Bookmarks",
+    label: "LinksShare",
     match: (url) => url.startsWith("/bookmarks"),
+  },
+  {
+    href: "/todos",
+    icon: ListTodo,
+    label: "To-Doer",
+    match: (url) => url.startsWith("/todos"),
   },
 ]
 

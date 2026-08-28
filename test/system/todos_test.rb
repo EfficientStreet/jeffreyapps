@@ -17,7 +17,7 @@ class TodosTest < ApplicationSystemTestCase
     # Wait for the async Inertia login POST to land before navigating.
     assert_selector "h1", text: "Home"
 
-    click_link "To-Dos"
+    click_link "To-Doer"
     assert_selector "h1", text: "Jamie One’s To-Dos"
 
     # The nav click is an Inertia client-side visit; the page's JS chunk hydrates
@@ -58,6 +58,13 @@ class TodosTest < ApplicationSystemTestCase
     # Positive wait for the empty state before asserting the row is gone.
     assert_text "Nothing to do. Add a to-do above."
     assert_no_selector "li", text: "Buy oat milk"
+
+    # App shell footer
+    within("footer") do
+      assert_link "Bug Reports / Feature Requests / Feedback"
+      assert_link "JeffreyApps.com", href: "mailto:jeffrey@efficientstreet.com"
+      assert_selector "a[aria-label='LinkedIn']"
+    end
   end
 
   private
