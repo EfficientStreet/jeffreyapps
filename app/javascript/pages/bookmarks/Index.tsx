@@ -45,6 +45,12 @@ export default function BookmarksIndex() {
   const { props } = usePage<PageProps<BookmarksIndexProps>>()
   const { bookmarks, tags } = props
 
+  const user = props.current_user
+  const rawName = user?.name || user?.email.split("@")[0]
+  const displayName = rawName
+    ? rawName.charAt(0).toUpperCase() + rawName.slice(1)
+    : undefined
+
   usePollWhilePending(bookmarks.some((bookmark) => bookmark.summary_status === "pending"))
 
   const [selectedTagId, setSelectedTagId] = React.useState<number | null>(null)
@@ -71,7 +77,7 @@ export default function BookmarksIndex() {
       </Head>
       <AppShell>
         <PageHeader
-          title="Bookmarks"
+          title={displayName ? `${displayName}’s Bookmarks` : "Bookmarks"}
           description={`${bookmarks.length} ${bookmarks.length === 1 ? "bookmark" : "bookmarks"} saved.`}
           actions={
             <>
