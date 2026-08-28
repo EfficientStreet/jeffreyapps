@@ -33,7 +33,7 @@ After completing a merge into `main`, make it easy for the user to watch the dep
 1. Output this repo's Hatchbox activity feed URL: https://app.hatchbox.io/apps/13955
 2. Automatically open that URL in the user's browser
 
-Hatchbox app: `jeffreyapps-production` (id `13955`), cluster `jeffreyapps-production` (id `10128`, DigitalOcean nyc3), deploys `main`, `auto_deploy` on. Live at https://jeffreyapps.com. First deployed 2026-08-28. SSR is currently disabled in production (`INERTIA_SSR=0`) — no SSR Node process is configured yet; the app renders client-only until one is added.
+Hatchbox app: `jeffreyapps-production` (id `13955`), cluster `jeffreyapps-production` (id `10128`, DigitalOcean nyc3), deploys `main`, `auto_deploy` on. Live at https://jeffreyapps.com. First deployed 2026-08-28. SSR is enabled (`INERTIA_SSR=1`) with an `ssr` process (`bin/vite ssr`, web role) alongside `server` and `solid_queue`.
 
 ## Architecture
 
