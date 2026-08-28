@@ -64,9 +64,6 @@ end
 # HTML parsing for fetching a bookmarked page's <title> and content
 gem "nokogiri"
 
-# Official Anthropic SDK, used to generate bookmark summaries [https://github.com/anthropics/anthropic-sdk-ruby]
-gem "anthropic"
-
 # Official Resend SDK, used to send share emails [https://github.com/resend/resend-ruby]
 gem "resend"
 
